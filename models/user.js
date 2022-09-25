@@ -1,7 +1,12 @@
 const mongoose = require('mongoose');
 const validator = require('validator');
 const bcrypt = require('bcrypt');
+
 const UnauthorizedError = require('../errors/UnauthorizedError');
+const {
+  INVALID_EMAIL_FORMAT_ERROR_TEXT,
+  INVALID_EMAIL_OR_PASSWORD_ERROR_TEXT,
+} = require('../utils/errorConstants');
 
 const userSchema = new mongoose.Schema({
   email: {
@@ -10,7 +15,7 @@ const userSchema = new mongoose.Schema({
     unique: true,
     validate: {
       validator: (email) => validator.isEmail(email),
-      message: 'Неверный формат электронного почты',
+      message: INVALID_EMAIL_FORMAT_ERROR_TEXT,
     },
   },
   password: {
@@ -30,21 +35,18 @@ userSchema.statics.findUserByCredentials = function passwordHashHandler(
   email,
   password,
 ) {
-  return this.findOne({ email })
-    .select('+password')
-    .then((user) => {
-      if (!user) {
-        throw new UnauthorizedError('Неверный электронный адрес или пароль');
-      }
+  return this.findOne({ email }).select('+password').then((user) => {
+    if (!user) {
+      throw new UnauthorizedError(INVALID_EMAIL_OR_PASSWORD_ERROR_TEXT);
+    }
 
-      return bcrypt.compare(password, user.password)
-        .then((matched) => {
-          if (!matched) {
-            throw new UnauthorizedError('Неверный электронный адрес или пароль');
-          }
-          return user;
-        });
+    return bcrypt.compare(password, user.password).then((matched) => {
+      if (!matched) {
+        throw new UnauthorizedError(INVALID_EMAIL_OR_PASSWORD_ERROR_TEXT);
+      }
+      return user;
     });
+  });
 };
 
 module.exports = mongoose.model('user', userSchema);

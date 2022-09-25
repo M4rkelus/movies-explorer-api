@@ -6,8 +6,20 @@ const BadRequestError = require('../errors/BadRequestError');
 const NotFoundError = require('../errors/NotFoundError');
 const ConflictError = require('../errors/ConflictError');
 
-const { NODE_ENV, JWT_SECRET = 'dev-secret' } = process.env;
+const {
+  DUPLICATE_EMAIL_ERROR_TEXT,
+  INVALID_USER_DATA_ERROR_TEXT,
+  INVALID_PROFILE_DATA_ERROR_TEXT,
+  USER_ID_NOT_FOUND_ERROR_TEXT,
+} = require('../utils/errorConstants');
 
+const {
+  NODE_ENV,
+  JWT_SECRET,
+  DEV_JWT_SECRET,
+} = require('../utils/configConstants');
+
+/* POST /signup - create new user */
 const createUser = (req, res, next) => {
   const { name, email, password } = req.body;
 
@@ -19,40 +31,26 @@ const createUser = (req, res, next) => {
     }))
     .catch((err) => {
       if (err.name === 'ValidationError') {
-        next(new BadRequestError(
-          'Переданы некорректные данные в методы создания пользователя',
-        ));
+        next(new BadRequestError(INVALID_USER_DATA_ERROR_TEXT));
       } else if (err.code === 11000) {
-        next(new ConflictError(
-          'Пользователь с таким электронным адресом уже существует',
-        ));
+        next(new ConflictError(DUPLICATE_EMAIL_ERROR_TEXT));
       } else {
         next(err);
       }
     });
 };
 
+/* GET /users/me - get current user data by Id */
 const getCurrentUser = (req, res, next) => {
   const { _id } = req.user;
 
   User.findById(_id)
-    .orFail(() => {
-      throw new NotFoundError(`Пользователь c id: ${_id} не найден`);
-    })
-    .then((user) => {
-      res.send({ data: user });
-    })
-    .catch((err) => {
-      if (err.name === 'CastError') {
-        next(new BadRequestError('Передан некорректный id пользователя'));
-      } else if (err.name === 'NotFoundError') {
-        next(new NotFoundError(`Пользователь c id: ${_id} не найден`));
-      } else {
-        next(err);
-      }
-    });
+    .orFail(() => next(new NotFoundError(USER_ID_NOT_FOUND_ERROR_TEXT)))
+    .then((user) => res.send({ data: user }))
+    .catch(next);
 };
 
+/* PATCH /users/me - update current user data */
 const updProfile = (req, res, next) => {
   const { name, email } = req.body;
 
@@ -61,25 +59,20 @@ const updProfile = (req, res, next) => {
     { name, email },
     { new: true, runValidators: true },
   )
-    .orFail(() => {
-      throw new NotFoundError(`пользователь c id: ${req.user._id} не найден`);
-    })
-    .then((user) => {
-      res.send({ name: user.name, email: user.email });
-    })
+    .orFail(() => next(new NotFoundError(USER_ID_NOT_FOUND_ERROR_TEXT)))
+    .then((user) => res.send({ name: user.name, email: user.email }))
     .catch((err) => {
       if (err.name === 'CastError' || err.name === 'ValidationError') {
-        next(new BadRequestError(
-          'Переданы некорректные данные в методы обновления профиля',
-        ));
-      } else if (err.name === 'NotFoundError') {
-        next(new NotFoundError(`Пользователь c id: ${req.user._id} не найден`));
+        next(new BadRequestError(INVALID_PROFILE_DATA_ERROR_TEXT));
+      } else if (err.code === 11000) {
+        next(new ConflictError(DUPLICATE_EMAIL_ERROR_TEXT));
       } else {
         next(err);
       }
     });
 };
 
+/* POST /signin - authentication */
 const login = (req, res, next) => {
   const { email, password } = req.body;
 
@@ -87,7 +80,7 @@ const login = (req, res, next) => {
     .then((user) => {
       const token = jwt.sign(
         { _id: user._id },
-        NODE_ENV === 'production' ? JWT_SECRET : 'dev-secret',
+        NODE_ENV === 'production' ? JWT_SECRET : DEV_JWT_SECRET,
         { expiresIn: '7d' },
       );
       res
@@ -102,6 +95,7 @@ const login = (req, res, next) => {
     .catch(next);
 };
 
+/* GET /signout - logout current user */
 const logout = (_, res) => {
   res.clearCookie('jwt').send({ message: 'Выход' });
 };

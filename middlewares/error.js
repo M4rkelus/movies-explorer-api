@@ -1,8 +1,10 @@
+const { SERVER_ERROR_CODE, SERVER_ERROR_TEXT } = require('../utils/errorConstants');
+
 const error = (err, _, res, next) => {
-  const { status = 500, message } = err;
+  const { status = SERVER_ERROR_CODE, message } = err;
 
   res.status(status).send({
-    message: status === 500 ? 'Ошибка сервера' : message,
+    message: status === SERVER_ERROR_CODE ? SERVER_ERROR_TEXT : message,
   });
 
   next();

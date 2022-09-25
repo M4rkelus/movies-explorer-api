@@ -6,6 +6,7 @@ const auth = require('../middlewares/auth');
 const { createUser, login, logout } = require('../controllers/users');
 const { authValidate, registerValidate } = require('../middlewares/validation');
 const NotFoundError = require('../errors/NotFoundError');
+const { URL_NOT_FOUND_ERROR_TEXT } = require('../utils/errorConstants');
 
 router.post('/signup', registerValidate, createUser);
 router.post('/signin', authValidate, login);
@@ -16,8 +17,8 @@ router.use(auth);
 router.use('/users', userRouter);
 router.use('/movies', movieRouter);
 
-router.use(() => {
-  throw new NotFoundError('Указан неправильный путь');
+router.use('*', (req, _, next) => {
+  next(new NotFoundError(`${URL_NOT_FOUND_ERROR_TEXT} ${req.baseUrl}`));
 });
 
 module.exports = router;

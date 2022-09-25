@@ -1,6 +1,8 @@
 const mongoose = require('mongoose');
 const validator = require('validator');
 
+const { INVALID_URL_FORMAT_ERROR_TEXT } = require('../utils/errorConstants');
+
 const movieSchema = new mongoose.Schema({
   country: {
     type: String,
@@ -27,7 +29,7 @@ const movieSchema = new mongoose.Schema({
     required: true,
     validate: {
       validator: (url) => validator.isURL(url),
-      message: 'Неверный формат ссылки',
+      message: INVALID_URL_FORMAT_ERROR_TEXT,
     },
   },
   trailerLink: {
@@ -35,7 +37,7 @@ const movieSchema = new mongoose.Schema({
     required: true,
     validate: {
       validator: (url) => validator.isURL(url),
-      message: 'Неверный формат ссылки',
+      message: INVALID_URL_FORMAT_ERROR_TEXT,
     },
   },
   thumbnail: {
@@ -43,7 +45,7 @@ const movieSchema = new mongoose.Schema({
     required: true,
     validate: {
       validator: (url) => validator.isURL(url),
-      message: 'Неверный формат ссылки',
+      message: INVALID_URL_FORMAT_ERROR_TEXT,
     },
   },
   owner: {
@@ -51,16 +53,17 @@ const movieSchema = new mongoose.Schema({
     ref: 'user',
     required: true,
   },
-  movieId: { //TODO  id фильма, который содержится в ответе сервиса MoviesExplorer. Обязательное поле.
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'user',
+  movieId: {
+    type: Number,
     required: true,
   },
   nameRU: {
     type: String,
+    required: true,
   },
   nameEN: {
     type: String,
+    required: true,
   },
 });
 
