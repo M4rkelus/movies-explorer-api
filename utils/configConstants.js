@@ -12,10 +12,10 @@ const CORS_OPTIONS = {
   origin: [
     'http://localhost:3000',
     'http://localhost:3001',
-    'http://mesto-frontend-mp.nomoredomains.sbs',
-    'http://mesto-backtend-mp.nomoredomains.sbs',
-    'https://mesto-frontend-mp.nomoredomains.sbs',
-    'https://mesto-backtend-mp.nomoredomains.sbs',
+    'http://movies-explorer-mrk.nomorepartiesxyz.ru',
+    'http://api.movies-explorer-mrk.nomorepartiesxyz.ru',
+    'https://movies-explorer-mrk.nomorepartiesxyz.ru',
+    'https://api.movies-explorer-mrk.nomorepartiesxyz.ru',
   ],
   credentials: true,
 };
