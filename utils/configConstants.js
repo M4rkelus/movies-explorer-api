@@ -17,6 +17,10 @@ const CORS_OPTIONS = {
     'https://movies-explorer-mrk.nomorepartiesxyz.ru',
     'https://api.movies-explorer-mrk.nomorepartiesxyz.ru',
   ],
+  methods: ['GET', 'HEAD', 'PUT', 'PATCH', 'POST', 'DELETE'],
+  preflightContinue: false,
+  optionsSuccessStatus: 204,
+  allowedHeaders: ['Content-Type', 'origin', 'Authorization', 'Accept'],
   credentials: true,
 };
 
