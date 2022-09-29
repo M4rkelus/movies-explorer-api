@@ -21,7 +21,6 @@ const {
 const app = express();
 
 app.use(helmet());
-app.use(limiter);
 app.use(cors(CORS_OPTIONS));
 app.use(cookieParser());
 app.use(express.json());
@@ -29,6 +28,7 @@ app.use(express.json());
 mongoose.connect(NODE_ENV === 'production' ? DATABASE : DEV_DATABASE);
 
 app.use(requestLogger);
+app.use(limiter);
 app.use(routes);
 app.use(errorLogger);
 app.use(errors());
