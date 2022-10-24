@@ -9,7 +9,14 @@ const DEV_DATABASE = 'mongodb://localhost:27017/moviesdb';
 const DEV_JWT_SECRET = 'dev-secret';
 
 const CORS_OPTIONS = {
-  origin: allowedCors,
+  origin: [
+    'http://localhost:3000',
+    'http://localhost:3001',
+    'http://api.nomoreparties.co',
+    'https://api.nomoreparties.co',
+    'http://api.movies-explorer-mrk.nomorepartiesxyz.ru',
+    'https://api.movies-explorer-mrk.nomorepartiesxyz.ru',
+  ],
   credentials: true,
 };
 
