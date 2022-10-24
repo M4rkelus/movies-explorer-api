@@ -10,10 +10,6 @@ const DEV_JWT_SECRET = 'dev-secret';
 
 const CORS_OPTIONS = {
   origin: allowedCors,
-  methods: ['GET', 'HEAD', 'PUT', 'PATCH', 'POST', 'DELETE'],
-  preflightContinue: false,
-  optionsSuccessStatus: 204,
-  allowedHeaders: ['Content-Type', 'origin', 'Authorization', 'Accept'],
   credentials: true,
 };
 
