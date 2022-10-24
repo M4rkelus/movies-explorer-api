@@ -67,11 +67,11 @@ const deleteMovie = (req, res, next) => {
     .orFail(() => next(new NotFoundError(MOVIE_ID_NOT_FOUND_ERROR_TEXT)))
     .then((movie) => {
       if (movie.owner.toString() === req.user._id) {
-        Movie.findByIdAndRemove(movieId)
+        return Movie.findByIdAndRemove(movieId)
           .then(() => res.send({ message: 'Фильм удален' }))
           .catch(next);
       }
-      next(new ForbiddenError(ACCESS_ERROR_TEXT));
+      return next(new ForbiddenError(ACCESS_ERROR_TEXT));
     })
     .catch((err) => {
       if (err.name === 'CastError') {
