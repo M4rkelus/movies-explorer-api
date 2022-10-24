@@ -23,7 +23,7 @@ const {
 const createUser = (req, res, next) => {
   const { name, email, password } = req.body;
 
-  bcrypt.hash(password, 10)
+  return bcrypt.hash(password, 10)
     .then((hash) => User.create({ name, email, password: hash }))
     .then((user) => res.status(201).send({
       name: user.name,
@@ -44,7 +44,7 @@ const createUser = (req, res, next) => {
 const getCurrentUser = (req, res, next) => {
   const { _id } = req.user;
 
-  User.findById(_id)
+  return User.findById(_id)
     .orFail(() => next(new NotFoundError(USER_ID_NOT_FOUND_ERROR_TEXT)))
     .then((user) => res.send({ data: user }))
     .catch(next);
@@ -54,7 +54,7 @@ const getCurrentUser = (req, res, next) => {
 const updProfile = (req, res, next) => {
   const { name, email } = req.body;
 
-  User.findByIdAndUpdate(
+  return User.findByIdAndUpdate(
     req.user._id,
     { name, email },
     { new: true, runValidators: true },
@@ -76,14 +76,14 @@ const updProfile = (req, res, next) => {
 const login = (req, res, next) => {
   const { email, password } = req.body;
 
-  User.findUserByCredentials(email, password)
+  return User.findUserByCredentials(email, password)
     .then((user) => {
       const token = jwt.sign(
         { _id: user._id },
         NODE_ENV === 'production' ? JWT_SECRET : DEV_JWT_SECRET,
         { expiresIn: '7d' },
       );
-      return res
+      res
         .cookie('jwt', token, {
           maxAge: (7 * 24 * 60 * 60),
           httpOnly: true,
