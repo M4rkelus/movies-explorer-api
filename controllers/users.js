@@ -44,7 +44,7 @@ const createUser = (req, res, next) => {
 const getCurrentUser = (req, res, next) => {
   const { _id } = req.user;
 
-  return User.findById(_id)
+  User.findById(_id)
     .orFail(() => next(new NotFoundError(USER_ID_NOT_FOUND_ERROR_TEXT)))
     .then((user) => res.send({ data: user }))
     .catch(next);
