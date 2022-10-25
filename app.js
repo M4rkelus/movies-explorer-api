@@ -21,7 +21,7 @@ const {
 const app = express();
 
 app.use(helmet());
-app.use(cors(CORS_OPTIONS));
+app.use('*', cors(CORS_OPTIONS));
 app.use(cookieParser());
 app.use(express.json());
 
