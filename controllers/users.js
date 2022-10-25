@@ -90,7 +90,7 @@ const login = (req, res, next) => {
           secure: true,
           sameSite: 'none',
         })
-        .send({ message: 'Вы успешно авторизовались!' })
+        .send({ token })
         .end();
     })
     .catch(next);
