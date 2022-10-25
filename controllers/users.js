@@ -76,22 +76,19 @@ const updProfile = (req, res, next) => {
 const login = (req, res, next) => {
   const { email, password } = req.body;
 
-  return User.findUserByCredentials(email, password)
+  User.findUserByCredentials(email, password)
     .then((user) => {
       const token = jwt.sign(
         { _id: user._id },
         NODE_ENV === 'production' ? JWT_SECRET : DEV_JWT_SECRET,
         { expiresIn: '7d' },
       );
-      res
-        .cookie('jwt', token, {
-          maxAge: (7 * 24 * 60 * 60),
-          httpOnly: true,
-          secure: true,
-          sameSite: 'none',
-        })
-        .send({ token })
-        .end();
+
+      return res.cookie('jwt', token, {
+        maxAge: 3600000 * 24 * 7,
+        httpOnly: true,
+        sameSite: true,
+      }).send({ token });
     })
     .catch(next);
 };
