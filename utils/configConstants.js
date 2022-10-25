@@ -10,6 +10,8 @@ const DEV_JWT_SECRET = 'dev-secret';
 
 const CORS_OPTIONS = {
   origin: [
+    'localhost:3000',
+    'localhost:3001',
     'http://localhost:3000',
     'http://localhost:3001',
     'http://api.nomoreparties.co',
