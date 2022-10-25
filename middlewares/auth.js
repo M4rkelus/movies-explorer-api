@@ -10,12 +10,7 @@ const {
 } = require('../utils/configConstants');
 
 const auth = (req, _, next) => {
-  const authToken = req.cookies.jwt;
-
-  if (!auth) {
-    next(new UnauthorizedError(UNAUTHORIZED_ERROR_TEXT));
-  }
-  const token = authToken.replace('Bearer ', '');
+  const token = req.cookies.jwt;
 
   let payload;
 
